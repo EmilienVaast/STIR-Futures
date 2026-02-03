@@ -12,22 +12,19 @@ The model computes:
 4) **Expected SR3 prices for 2026** using the expected policy path + expected SOFR rules (requires extending the path into early 2027)
 
 ---
-
-** Repo structure:
-**  notebooks/
-**     run_all.ipynb            # main entry notebook (imports from src/)
-**   src/
-**     nyfed_api.py             # NY Fed Markets API fetchers (SOFR/EFFR)
-**     dates_calendars.py       # IMM dates, business-day logic, calendars
-**     rounding.py              # CME-style rounding helpers
-**     zq.py                    # ZQ settlement + expected tables
-**     sr1.py                   # SR1 settlement + expected tables
-**     sr3.py                   # SR3 settlement + expected tables
-**     scenarios.py             # policy path builders (FOMC cut schedule)
-**     reporting.py             # dashed-table printer utilities
-**     constants.py             # month codes, shared constants
-
-
+ Repo structure:
+  notebooks/
+     run_all.ipynb            # main entry notebook (imports from src/)
+  src/
+     nyfed_api.py             # NY Fed Markets API fetchers (SOFR/EFFR)
+     dates_calendars.py       # IMM dates, business-day logic, calendars
+     rounding.py              # CME-style rounding helpers
+     zq.py                    # ZQ settlement + expected tables
+     sr1.py                   # SR1 settlement + expected tables
+     sr3.py                   # SR3 settlement + expected tables
+     scenarios.py             # policy path builders (FOMC cut schedule)
+     reporting.py             # dashed-table printer utilities
+     constants.py             # month codes, shared constants
 ---
 
 ## Installation
