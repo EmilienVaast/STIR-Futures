@@ -11,7 +11,7 @@ The model computes:
 3) **Expected SR1 prices for 2026** using a rule-based SOFR path relative to Fed Funds  
 4) **Expected SR3 prices for 2026** using the expected policy path + expected SOFR rules (requires extending the path into early 2027)
 
----
+
  Repo structure:
   notebooks/
      run_all.ipynb            # main entry notebook (imports from src/)
@@ -25,7 +25,7 @@ The model computes:
      scenarios.py             # policy path builders (FOMC cut schedule)
      reporting.py             # dashed-table printer utilities
      constants.py             # month codes, shared constants
----
+
 
 ## Installation
 
