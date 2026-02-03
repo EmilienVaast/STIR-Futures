@@ -1,0 +1,22 @@
+# requirements.txt
+# ============================================================
+# Futures First – STIR Pricing Model (SOFR + Fed Funds)
+# ============================================================
+# Installs the minimal runtime + notebook dependencies needed to:
+# - Pull SOFR / EFFR from the NY Fed Markets API
+# - Apply CME-style settlement methodology for SR3 / SR1 / ZQ
+# - Run the main notebook (notebooks/run_all.ipynb)
+# ============================================================
+
+# Data handling
+pandas>=2.0.0
+
+# HTTP client for NY Fed Markets API
+requests>=2.31.0
+
+# Business-day calendars / IMM + last business day calculations
+QuantLib-Python>=1.18
+
+# Notebook runtime (required to open/run the .ipynb locally)
+jupyter>=1.0.0
+ipykernel>=6.0.0
