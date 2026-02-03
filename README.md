@@ -1,4 +1,4 @@
-FF_Venkat – STIR Pricing Model (SR3 / SR1 / ZQ)
+Venkat – STIR Pricing Model (SR3 / SR1 / ZQ)
 
 Python implementation of basic pricing models for CME STIR futures:
 - **SR3 (Three-Month SOFR futures)**

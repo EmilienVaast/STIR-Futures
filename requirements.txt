@@ -1,6 +1,6 @@
 # requirements.txt
 # ============================================================
-# Futures First – STIR Pricing Model (SOFR + Fed Funds)
+# STIR Pricing Model (SOFR + Fed Funds)
 # ============================================================
 # Installs the minimal runtime + notebook dependencies needed to:
 # - Pull SOFR / EFFR from the NY Fed Markets API
