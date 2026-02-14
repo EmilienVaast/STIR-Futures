@@ -12,6 +12,9 @@
 pandas>=2.0.0
 pyarrow>=14.0.0
 
+# Robust project-root detection (like R's `here`)
+pyprojroot>=0.3.0
+
 # HTTP client for NY Fed Markets API
 requests>=2.31.0
 

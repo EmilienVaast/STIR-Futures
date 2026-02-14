@@ -6,6 +6,11 @@ from datetime import date
 
 import pandas as pd
 
+try:
+    from pyprojroot import here as _project_root
+except ImportError:
+    _project_root = None
+
 
 # ---------------------------------------------------------------------------
 # CME month codes
@@ -20,11 +25,25 @@ CME_MONTH_CODES = {1: "F", 2: "G", 3: "H", 4: "J", 5: "K", 6: "M", 7: "N", 8: "Q
 
 
 def resolve_data_dir() -> Path:
+    """
+    Resolve the data directory for caching rate files.
+
+    Priority:
+        1. STIR_DATA_DIR environment variable (if set)
+        2. pyprojroot detection (finds pyproject.toml, .git, etc.)
+        3. Fallback to relative path from this module
+    """
+    # 1. Environment variable override
     env_path = os.getenv("STIR_DATA_DIR")
     if env_path:
         path = Path(env_path).expanduser().resolve()
+    # 2. pyprojroot detection (robust across working directories)
+    elif _project_root is not None:
+        path = _project_root() / "data"
+    # 3. Fallback: relative to this module
     else:
         path = Path(__file__).resolve().parents[1] / "data"
+
     path.mkdir(parents=True, exist_ok=True)
     return path
 
