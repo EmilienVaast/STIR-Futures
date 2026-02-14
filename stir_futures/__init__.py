@@ -2,7 +2,7 @@
 
 __all__ = [
     "calendars",
-    "constants",
+    "config",
     "data",
     "pricing",
     "reporting",
