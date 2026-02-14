@@ -1,11 +1,16 @@
 import pandas as pd
 import QuantLib as ql
 from typing import Optional, Tuple
-from .constants import CME_MONTH_CODES
-from .rounding import round_half_up
-from .dates_calendars import last_business_day_of_month
+from stir_futures.constants import CME_MONTH_CODES
+from stir_futures.rounding import round_half_up
+from stir_futures.calendars import last_business_day_of_month
 
-def zq_final_settlement_from_effr(effr_df: pd.DataFrame, year: int, month: int) -> Tuple[Optional[float], Optional[float], Optional[float], Optional[pd.Timestamp]]:
+
+def zq_final_settlement_from_effr(
+    effr_df: pd.DataFrame,
+    year: int,
+    month: int,
+) -> Tuple[Optional[float], Optional[float], Optional[float], Optional[pd.Timestamp]]:
     start = pd.Timestamp(year=year, month=month, day=1)
     end = (start + pd.offsets.MonthEnd(1)).normalize()
     cal_days = pd.date_range(start, end, freq="D")
@@ -24,6 +29,7 @@ def zq_final_settlement_from_effr(effr_df: pd.DataFrame, year: int, month: int) 
     settle_4dp = round_half_up(settle, 4)        # keep as your code did (0.0001)
 
     return avg_raw, avg_rnd, settle_4dp, None
+
 
 def build_zq_2025_table(
     effr_df: pd.DataFrame,
@@ -70,10 +76,11 @@ def build_zq_2025_table(
             "Avg EFFR (rnd %)": avg_rnd_str,
             "Model Settle": model_str,
             "Official-Barchart": official_str,
-            "Diff (bps)": diff_str
+            "Diff (bps)": diff_str,
         })
 
     return pd.DataFrame(rows)
+
 
 def build_expected_zq_2026_table(
     mid_path_2026: pd.Series,

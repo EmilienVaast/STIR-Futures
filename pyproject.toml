@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stir-futures"
+version = "0.0.0"
+description = "STIR futures pricing models for SR3, SR1, and ZQ contracts."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "pandas>=2.0.0",
+    "pyarrow>=14.0.0",
+    "requests>=2.31.0",
+    "QuantLib-Python>=1.18",
+    "jupyter>=1.0.0",
+    "ipykernel>=6.0.0",
+]
+
+[project.scripts]
+stir-futures = "stir_futures.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["stir_futures*"]

@@ -1,16 +1,18 @@
 import pandas as pd
 import QuantLib as ql
 from typing import Optional
-from .rounding import round_half_up
-from .constants import CME_MONTH_CODES
-from .dates_calendars import third_wednesday, add_months
-from .scenarios import expected_sofr_on_date
+from stir_futures.rounding import round_half_up
+from stir_futures.constants import CME_MONTH_CODES
+from stir_futures.calendars import third_wednesday, add_months
+from stir_futures.scenarios import expected_sofr_on_date
+
 
 def sr3_reference_quarter(contract_year: int, contract_month: int) -> tuple[pd.Timestamp, pd.Timestamp]:
     start_incl = third_wednesday(contract_year, contract_month)
     end_year, end_month = add_months(contract_year, contract_month, 3)
     end_excl = third_wednesday(end_year, end_month)
     return start_incl, end_excl
+
 
 def sr3_last_trading_day(contract_year: int, contract_month: int, cal: ql.Calendar) -> pd.Timestamp:
     deliv_year, deliv_month = add_months(contract_year, contract_month, 3)
@@ -20,6 +22,7 @@ def sr3_last_trading_day(contract_year: int, contract_month: int, cal: ql.Calend
     while not cal.isBusinessDay(d):
         d = d - 1
     return pd.Timestamp(d.year(), d.month(), d.dayOfMonth())
+
 
 def sr3_settlement_from_sofr(sofr_df: pd.DataFrame, contract_year: int, contract_month: int, cal: ql.Calendar) -> Optional[float]:
     start_incl, end_excl = sr3_reference_quarter(contract_year, contract_month)
@@ -48,6 +51,7 @@ def sr3_settlement_from_sofr(sofr_df: pd.DataFrame, contract_year: int, contract
 
     R_percent = round_half_up(R_raw, 4)  # 0.0001
     return 100.0 - R_percent
+
 
 def build_sr3_2025_table(
     sofr_df: pd.DataFrame,
@@ -99,6 +103,7 @@ def build_sr3_2025_table(
 
     return pd.DataFrame(rows)
 
+
 def sr3_expected_settlement(
     contract_year: int,
     contract_month: int,
@@ -123,7 +128,7 @@ def sr3_expected_settlement(
 
     rates = pd.Series(
         [expected_sofr_on_date(d, effr_path, cal, base_spread_bps, jump_bps) for d in bdays],
-        index=bdays
+        index=bdays,
     )
 
     next_days = bdays[1:].append(pd.DatetimeIndex([end_excl.normalize()]))
@@ -136,6 +141,7 @@ def sr3_expected_settlement(
 
     R_percent = round_half_up(R_raw, 4)
     return 100.0 - R_percent
+
 
 def build_sr3_2026_expected_table(
     cal: ql.Calendar,

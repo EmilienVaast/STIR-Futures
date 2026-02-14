@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def print_dashed_table(df: pd.DataFrame, cols: list[str]) -> None:
     df = df[cols].copy()
     widths = {c: max(len(c), df[c].astype(str).map(len).max()) for c in cols}

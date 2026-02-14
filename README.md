@@ -1,76 +1,84 @@
-Venkat – STIR Pricing Model (SR3 / SR1 / ZQ)
+# STIR Futures Pricing Model
 
-Python implementation of basic pricing models for CME STIR futures:
-- **SR3 (Three-Month SOFR futures)**
-- **SR1 (One-Month SOFR futures)**
-- **ZQ (30-Day Federal Funds futures)**
+Pricing models for CME Short-Term Interest Rate (STIR) futures:
 
-The model computes:
-1) **Realized (historical) final settlement prices for 2025 expiries** using NY Fed fixings and CME-style settlement logic  
-2) **Expected ZQ prices for 2026** under a rule-based FOMC policy path  
-3) **Expected SR1 prices for 2026** using a rule-based SOFR path relative to Fed Funds  
-4) **Expected SR3 prices for 2026** using the expected policy path + expected SOFR rules (requires extending the path into early 2027)
+| Contract | Description |
+|----------|-------------|
+| **SR3** | Three-Month SOFR futures |
+| **SR1** | One-Month SOFR futures |
+| **ZQ** | 30-Day Federal Funds futures |
 
+## Features
 
- Repo structure:
--  notebooks/
- -    run_all.ipynb            # main entry notebook (imports from src/)
- - src/
-  -   nyfed_api.py             # NY Fed Markets API fetchers (SOFR/EFFR)
-  -   dates_calendars.py       # IMM dates, business-day logic, calendars
-  -   rounding.py              # CME-style rounding helpers
-  -   zq.py                    # ZQ settlement + expected tables
-  -   sr1.py                   # SR1 settlement + expected tables
-  -   sr3.py                   # SR3 settlement + expected tables
-  -   scenarios.py             # policy path builders (FOMC cut schedule)
-  -   reporting.py             # dashed-table printer utilities
-  -   constants.py             # month codes, shared constants
+- **Realized settlements** — Compute 2025 final settlement prices using NY Fed fixings and CME methodology
+- **Expected prices** — Project 2026 prices under configurable FOMC policy scenarios
+- **Data caching** — Automatic local storage (Parquet) of SOFR/EFFR rates from NY Fed API
 
-
-## Installation
-
-**Python**: 3.9+ recommended
+## Quick Start
 
 ```bash
-pip install -r requirements.txt
+# Install
+pip install -e .
 
-How to Run
+# Run the example notebook
+jupyter notebook examples/run_all.ipynb
+```
 
-Open and run:
+Or fetch data via CLI:
+```bash
+stir-futures fetch sofr --start 2024-12-01 --end 2026-12-31
+stir-futures fetch effr --start 2024-12-01 --end 2026-12-31
+```
 
-notebooks/run_all.ipynb → “Run All”
+## Project Structure
 
-This prints:
+```
+stir_futures/
+├── config.py          # Scenario parameters & official prices
+├── calendars.py       # IMM dates, business-day logic
+├── scenarios.py       # FOMC policy path builder
+├── rounding.py        # CME-style rounding
+├── reporting.py       # Table formatting
+├── cli.py             # Command-line interface
+├── data/
+│   ├── nyfed.py       # NY Fed API fetchers
+│   └── cache.py       # Parquet read/write
+└── pricing/
+    ├── sr1.py         # SR1 settlement logic
+    ├── sr3.py         # SR3 settlement logic
+    └── zq.py          # ZQ settlement logic
 
-realized 2025 tables for SR3 / SR1 / ZQ (with optional comparison to Barchart values)
+examples/
+└── run_all.ipynb      # Full workflow demo
 
-expected 2026 tables for ZQ, SR1, SR3 under scenario assumptions
+data/                  # Auto-generated cache (not committed)
+```
 
-Key Assumptions (Scenario Objectives)
-Objective 2 (ZQ expected, 2026)
+## Scenario Assumptions
 
-Expected EFFR = midpoint of Fed Funds target range
+All assumptions are configurable in `stir_futures/config.py`.
 
-FOMC policy changes modeled as step changes effective the day after meeting decision day
+### ZQ (Fed Funds futures)
+- Expected EFFR = midpoint of Fed Funds target range
+- Policy changes effective the day after FOMC decision
+- Settlement = calendar-day average of expected EFFR
 
-Monthly expected settlement uses calendar-day arithmetic average of expected daily EFFR
+### SR1 (1-Month SOFR)
+- Base SOFR = EFFR + 3 bps
+- Additional +10 bps jump on mid-month (15th) and last business day
+- Settlement = calendar-day average of expected SOFR
 
-Objective 3 (SR1 expected, 2026)
+### SR3 (3-Month SOFR)
+- Uses daily SOFR from SR1 assumptions
+- CME compounding over the reference quarter
+- Late-2026 contracts require extending the path into 2027
 
-Base SOFR = EFFR + 3 bps
+## Requirements
 
-SOFR has an additional +10 bps jump on:
+- Python 3.9+
+- pandas, pyarrow, requests, QuantLib-Python
+- jupyter (for notebooks)
 
-the 15th of the month (or next Monday if weekend: 16th/17th)
+## License
 
-the last business day of the month
-
-Monthly settlement uses calendar-day arithmetic average of expected daily SOFR
-
-Objective 4 (SR3 expected, 2026)
-
-Uses expected daily SOFR from Objective 3
-
-Uses SR3 compounding method over the SR3 reference quarter
-
-Requires extending expected paths into early 2027 because late-2026 contracts settle into 2027
+MIT

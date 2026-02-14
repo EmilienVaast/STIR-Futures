@@ -1,10 +1,10 @@
 import pandas as pd
 import QuantLib as ql
-from typing import Optional
-from .constants import CME_MONTH_CODES
-from .rounding import round_half_up
-from .dates_calendars import month_start_end, last_business_day_of_month
-from .scenarios import build_expected_sofr_daily_for_month
+from stir_futures.constants import CME_MONTH_CODES
+from stir_futures.rounding import round_half_up
+from stir_futures.calendars import month_start_end, last_business_day_of_month
+from stir_futures.scenarios import build_expected_sofr_daily_for_month
+
 
 def sr1_final_settlement_from_sofr(sofr_df: pd.DataFrame, delivery_year: int, delivery_month: int):
     month_start, month_end = month_start_end(delivery_year, delivery_month)
@@ -21,6 +21,7 @@ def sr1_final_settlement_from_sofr(sofr_df: pd.DataFrame, delivery_year: int, de
     settle = round_half_up(settle, 3)          # price to 0.001
 
     return settle, avg_raw, avg_rnd
+
 
 def build_sr1_2025_table(
     sofr_df: pd.DataFrame,
@@ -55,7 +56,7 @@ def build_sr1_2025_table(
                 "Avg SOFR (rnd %)": "—",
                 "Model Settle": "Not expired",
                 "Official-Barchart": f"{official:.4f}" if isinstance(official, (float, int)) else "—",
-                "Diff (bps)": "N/A"
+                "Diff (bps)": "N/A",
             })
             continue
 
@@ -79,10 +80,11 @@ def build_sr1_2025_table(
             "Avg SOFR (rnd %)": avg_rnd_str,
             "Model Settle": model_str,
             "Official-Barchart": f"{official:.4f}" if isinstance(official, (float, int)) else "—",
-            "Diff (bps)": diff_str
+            "Diff (bps)": diff_str,
         })
 
     return pd.DataFrame(rows)
+
 
 def build_sr1_2026_expected_table(
     effr_path_2026: pd.Series,
@@ -120,7 +122,7 @@ def build_sr1_2026_expected_table(
             "Ref End": str(ref_end.date()),
             "Last Trading Day": str(ltd.date()),
             "Status": "Expected",
-            "Mid-month jump day": sofr_daily.index[sofr_daily.index.day.isin([15,16,17])].min().date().isoformat(),  # display-only
+            "Mid-month jump day": sofr_daily.index[sofr_daily.index.day.isin([15, 16, 17])].min().date().isoformat(),  # display-only
             "Last BD jump day": last_business_day_of_month(YEAR, m, cal=cal).date().isoformat(),
             "Avg SOFR (raw %)": f"{avg_raw:.6f}",
             "Avg SOFR (rnd %)": f"{avg_rnd:.3f}",
